@@ -8,10 +8,13 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const userRoutes = require('./routes/userRoutes');
-
+const adminRoutes = require('./routes/adminRoutes');
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/users', userRoutes);
+app.use('/', userRoutes);
+app.use('/', adminRoutes);
+
+
 
 mongoose.connect(`mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, {
 });
