@@ -9,10 +9,14 @@ const port = process.env.PORT || 3000;
 
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const  roomsRoutes = require('./routes/rooms_routes');
+const flightRoutes = require('./routes/flightRoutes');
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/', userRoutes);
 app.use('/', adminRoutes);
+app.use('/', roomsRoutes);
+app.use('/',flightRoutes);
 
 
 
