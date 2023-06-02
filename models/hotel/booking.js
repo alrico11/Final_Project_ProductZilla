@@ -20,7 +20,7 @@ const bookingSchema = new Schema({
         type: Date,
         required: true
     },
-    guest: {
+    totalRoomBooked: {
         type: Number,
         required: true
     },
