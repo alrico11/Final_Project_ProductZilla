@@ -7,7 +7,7 @@ const isAdmin = (req, res, next) => {
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized access | no token' });
   }
-  
+
   try {
     // Verifikasi token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

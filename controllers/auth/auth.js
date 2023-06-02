@@ -1,5 +1,5 @@
-const User = require('../models/user');
-const BlacklistedToken = require('../models/blacklistedtoken');
+const User = require('../../models/user/user');
+const BlacklistedToken = require('../../models/user/blacklistedtoken');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 

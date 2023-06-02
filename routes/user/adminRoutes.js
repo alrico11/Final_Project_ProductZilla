@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
-const auth = require('../middleware/onlyAdmin')
+const adminController = require('../../controllers/auth/adminController');
+const auth = require('../../middleware/onlyAdmin')
 
 
 router.post('/api/admin/', auth,adminController.createAdmin);
