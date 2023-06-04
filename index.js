@@ -11,12 +11,37 @@ const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const  roomsRoutes = require('./routes/rooms_routes');
 const flightRoutes = require('./routes/flightRoutes');
+const hotelRoutes = require('./routes/hotelRoutes');
+const orderRoutes= require('./routes/orderRoutes');
+const paymentsRoutes = require('./routes/paymentsRoutes');
+const reservationFlightRoutes = require('./routes/reservationFlightRoutes');
+const reviewFlightRoutes = require('./routes/reviewFlightRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
+const userFlightRoutes = require('./routes/userFlightroutes');
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/', userRoutes);
 app.use('/', adminRoutes);
 app.use('/', roomsRoutes);
 app.use('/',flightRoutes);
+app.use('/',hotelRoutes);
+app.use('/',orderRoutes);
+app.use('/',paymentsRoutes);
+app.use('/',reservationFlightRoutes);
+app.use('/',reviewFlightRoutes);
+app.use('/',reviewRoutes);
+app.use('/',bookingRoutes);
+app.use('./',reservationRoutes);
+app.use('./',userFlightRoutes);
+
+
+
+
+
+
 
 
 
