@@ -1,69 +1,114 @@
-const HotelBooking = require('../../models/hotel/booking');
+const Booking = require('../../models/hotel/booking');
+const HotelRooms = require('../../models/hotel/hotel');
 
-const hotelBookingController = {
-    getAllBookings: async (req, res) => {
-        try {
-            const bookings = await HotelBooking.find().populate('user').populate('hotel').populate('room');
-            res.json(bookings);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
+exports.bookRoom = async (req, res) => {
+    try {
+        const { hotelId, roomId, checkInDate, checkOutDate, guest, totalPrice, customer } = req.body;
+        const room = await HotelRooms.findOne({ _id: hotelId, 'rooms._id': roomId }, { 'rooms.$': 1 }).exec();
+        const bookedRooms = await Booking.find({ hotelId, roomId, checkInDate: { $lte: checkOutDate }, checkOutDate: { $gte: checkInDate } }).exec();
+        const totalBookedRooms = bookedRooms.reduce((total, booking) => total + booking.guest, 0);
+        const availableRooms = room.rooms[0].availableRooms - totalBookedRooms;
+        if (availableRooms < guest) {
+            return res.status(400).json({ message: 'Kamar tidak tersedia di tanggal yang diminta' });
         }
-    },
-
-    getBookingById: async (req, res) => {
-        try {
-            const booking = await HotelBooking.findById(req.params.id).populate('user').populate('hotel').populate('room');
-            if (!booking) {
-                return res.status(404).json({ message: 'Booking not found' });
-            }
-            res.json(booking);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
-        }
-    },
-
-    createBooking: async (req, res) => {
-        try {
-            const newBooking = new HotelBooking(req.body);
-            const savedBooking = await newBooking.save();
-            res.json(savedBooking);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
-        }
-    },
-
-    updateBooking: async (req, res) => {
-        try {
-            const updatedBooking = await HotelBooking.findByIdAndUpdate(
-                req.params.id,
-                req.body,
-                { new: true }
-            ).populate('user').populate('hotel').populate('room');
-            if (!updatedBooking) {
-                return res.status(404).json({ message: 'Booking not found' });
-            }
-            res.json(updatedBooking);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
-        }
-    },
-
-    deleteBooking: async (req, res) => {
-        try {
-            const deletedBooking = await HotelBooking.findByIdAndDelete(req.params.id);
-            if (!deletedBooking) {
-                return res.status(404).json({ message: 'Booking not found' });
-            }
-            res.json(deletedBooking);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
-        }
+        // Buat booking baru
+        const booking = new Booking({
+            hotelId,
+            roomId,
+            checkInDate,
+            checkOutDate,
+            guest,
+            totalPrice,
+            customer
+        });
+        await booking.save();
+        await HotelRooms.updateOne({ _id: hotelId, 'rooms._id': roomId }, { inc: { 'rooms..availableRooms': -guest } }).exec();
+        return res.status(200).json({
+            message: 'Booking berhasil',
+            data: booking
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat melakukan booking' });
     }
 };
 
-module.exports = hotelBookingController;
+
+exports.getBookingById = async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id).exec();
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking tidak ditemukan' });
+        }
+        return res.status(200).json(booking);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data booking' });
+    }
+};
+
+exports.getAllBookings = async (req, res) => {
+    try {
+        const bookings = await Booking.find().exec();
+        return res.status(200).json(bookings);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data booking' });
+    }
+};
+
+exports.updateBooking = async (req, res) => {
+    try {
+        const { hotelId, roomId, checkInDate, checkOutDate, guest, totalPrice, customer } = req.body;
+        const booking = await Booking.findById(req.params.id).exec();
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking tidak ditemukan' });
+        }
+        if (booking.checkInDate < new Date()) {
+            return res.status(400).json({ message: 'Booking sudah terjadi, tidak dapat diubah' });
+        }
+        const room = await HotelRooms.findOne({ _id: hotelId, 'rooms._id': roomId }, { 'rooms.$': 1 }).exec();
+        const bookedRooms = await Booking.find({ hotelId, roomId, checkInDate: { $lte: checkOutDate }, checkOutDate: { $gte: checkInDate }, _id: { $ne: req.params.id } }).exec();
+        const totalBookedRooms = bookedRooms.reduce((total, booking) => total + booking.guest, 0);
+        const availableRooms = room.rooms[0].availableRooms - totalBookedRooms;
+        if (availableRooms < guest) {
+            return res.status(400).json({ message: 'Kamar tidak tersedia di tanggal yang diminta' });
+        }
+        booking.hotelId = hotelId;
+        booking.roomId = roomId;
+        booking.checkInDate = checkInDate;
+        booking.checkOutDate = checkOutDate;
+        booking.totalRoomBooked = guest;
+        booking.totalPrice = totalPrice;
+        booking.customer = customer;
+        await booking.save();
+        await HotelRooms.updateOne({ _id: hotelId, 'rooms._id': roomId }, { inc: { 'rooms..availableRooms': -guest } }).exec();
+        return res.status(200).json({ message: 'Booking berhasil diubah' });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat mengubah booking' });
+    }
+};
+
+exports.cancelBooking = async (req, res) => {
+    try {
+        const { bookingId } = req.body;
+
+        // Cek apakah booking dengan ID yang diminta ada di database
+        const booking = await Booking.findById(req.params.id).exec()
+        if (!booking) {
+            return res.status(400).json({ message: 'Booking tidak ditemukan' });
+        }
+
+        // Update jumlah kamar yang tersedia di database
+        await HotelRooms.updateOne({ _id: booking.hotelId, 'rooms._id': booking.roomId }, { $inc: { 'rooms.$.availableRooms': booking.guest } }).exec();
+
+        // Hapus booking dari database
+        await Booking.deleteOne({ _id: bookingId }).exec();
+
+        return res.status(200).json({ message: 'Booking berhasil dibatalkan' });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat membatalkan booking' });
+    }
+};

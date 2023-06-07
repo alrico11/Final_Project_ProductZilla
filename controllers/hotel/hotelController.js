@@ -4,10 +4,10 @@ const hotelController = {
     getAllHotels: async (req, res) => {
         try {
             const hotels = await Hotel.find();
-            res.json(hotels);
+            return res.json(hotels);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     },
 
@@ -17,32 +17,32 @@ const hotelController = {
             if (!hotel) {
                 return res.status(404).json({ message: 'Hotel not found' });
             }
-            res.json(hotel);
+            return res.json(hotel);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     },
     searchByCity: async (req, res) => {
         try {
-          const { city } = req.params;
-          const hotels = await Hotel.find({ city: { $regex: new RegExp(city, "i") } });
-      
-          res.status(200).json(hotels);
+            const { city } = req.params;
+            const hotels = await Hotel.find({ city: { $regex: new RegExp(city, "i") } });
+
+            return res.status(200).json(hotels);
         } catch (error) {
-          console.error(error);
-          res.status(500).json({ message: 'Internal Server Error' });
+            console.error(error);
+            return res.status(500).json({ message: 'Internal Server Error' });
         }
-      },
+    },
 
     createHotel: async (req, res) => {
         try {
             const newHotel = new Hotel(req.body);
             const savedHotel = await newHotel.save();
-            res.json(savedHotel);
+            return res.json(savedHotel);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     },
 
@@ -56,10 +56,10 @@ const hotelController = {
             if (!updatedHotel) {
                 return res.status(404).json({ message: 'Hotel not found' });
             }
-            res.json(updatedHotel);
+            return res.json(updatedHotel);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     },
 
@@ -69,10 +69,10 @@ const hotelController = {
             if (!deletedHotel) {
                 return res.status(404).json({ message: 'Hotel not found' });
             }
-            res.json(deletedHotel);
+            return res.json(deletedHotel);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     }
 };

@@ -23,8 +23,10 @@ app.use('/', adminRoutes);
 //HOTEL
 const hotelRoutes = require('./routes/hotel/hotelRoutes');
 const hotelBookingRoutes = require('./routes/hotel/hotelBookingRoutes');
+const hotelPayments = require('./routes/hotel/paymentBooking');
 app.use('/', hotelRoutes);
 app.use('/', hotelBookingRoutes);
+app.use('/', hotelPayments);
 
 
 // const orderRoutes = require('./routes/orderRoutes');

@@ -20,7 +20,7 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-    const user = new User({
+    const user = new User({ 
         fullname: req.body.fullname,
         email: req.body.email,
         password: req.body.password,
