@@ -19,7 +19,8 @@ exports.bookRoom = async (req, res) => {
             checkOutDate,
             guest,
             totalPrice,
-            customer
+            customer,
+            user: req.user.id
         });
         await booking.save();
         await HotelRooms.updateOne({ _id: hotelId, 'rooms._id': roomId }, { inc: { 'rooms..availableRooms': -guest } }).exec();
@@ -57,6 +58,7 @@ exports.getAllBookings = async (req, res) => {
     }
 };
 
+
 exports.updateBooking = async (req, res) => {
     try {
         const { hotelId, roomId, checkInDate, checkOutDate, guest, totalPrice, customer } = req.body;
@@ -83,7 +85,11 @@ exports.updateBooking = async (req, res) => {
         booking.customer = customer;
         await booking.save();
         await HotelRooms.updateOne({ _id: hotelId, 'rooms._id': roomId }, { inc: { 'rooms..availableRooms': -guest } }).exec();
-        return res.status(200).json({ message: 'Booking berhasil diubah' });
+        const updatedBooking = await Booking.findById(req.params.id).exec();
+        return res.status(200).json({
+            message: 'Booking berhasil diubah',
+            data: updatedBooking
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Terjadi kesalahan saat mengubah booking' });

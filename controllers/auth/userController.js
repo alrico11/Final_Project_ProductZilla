@@ -20,19 +20,20 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-    const user = new User({ 
-        fullname: req.body.fullname,
-        email: req.body.email,
-        password: req.body.password,
-        telephone: req.body.telephone,
-        birth_date: req.body.birth_date,
-        gender: req.body.gender,
-    });
     try {
+        const user = new User({
+            fullname: req.body.fullname,
+            email: req.body.email,
+            password: req.body.password,
+            telephone: req.body.telephone,
+            birth_date: req.body.birth_date,
+            gender: req.body.gender,
+        });
         const newUser = await user.save();
         res.status(201).json(newUser);
+
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ error_message: error.message });
     }
 };
 
@@ -60,7 +61,7 @@ exports.deleteUser = async (req, res) => {
         const user = await User.findById(req.params.id);
         if (!user) res.status(404).json({ message: 'User not found' });
 
-        await user.remove();
+        await user.deleteOne();
         res.status(200).json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });

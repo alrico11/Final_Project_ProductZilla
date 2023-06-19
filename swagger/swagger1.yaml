@@ -1,0 +1,820 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: User API
+  description: API for managing users
+basePath: '/'
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: Admin
+    description: API for managing admin users
+  - name: User
+    description: API for managing users
+  - name: Auth
+    description: API for managing authentication
+  - name: Flight
+    description: API for managing flights
+  - name: Hotel
+    description: API for managing Hotels
+  - name: Room
+    description: API for managing Rooms
+  - name: Payment Flight Confirm By Admin
+    description: API for confirming flight payments by admin
+  - name: Payment Booking Hotels Confirm By Admin
+    description: API for confirming hotel booking payments by admin
+
+paths:
+  /api/admin:
+    post:
+      security:
+        - api_key: []
+      tags:
+        - Admin
+      summary: Create new admin user
+      description: Create new admin user
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              fullname:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              telephone:
+                type: string
+              birth_date:
+                type: string
+              gender:
+                type: boolean
+      responses:
+        '200':
+          description: Successful operation
+    get:
+      tags:
+        - Admin
+      summary: Get all admin users
+      description: Get all admin users
+      responses:
+        '200':
+          description: Successful operation
+      security:
+        - api_key: []
+  /api/admin/{id}:
+    get:
+      security:
+        - api_key: []
+      tags:
+        - Admin
+      summary: Get admin user by ID
+      description: Get admin user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the admin user to get
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+    put:
+      security:
+        - api_key: []
+      tags:
+        - Admin
+      summary: Update admin user by ID
+      description: Update admin user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the admin user to update
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              fullname:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              telephone:
+                type: string
+              birth_date:
+                type: string
+              gender:
+                type: boolean
+      responses:
+        '200':
+          description: Successful operation
+    delete:
+      security:
+        - api_key: []
+      tags:
+        - Admin
+      summary: Delete admin user by ID
+      description: Delete admin user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the admin user to delete
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+    security:
+      - api_key: []
+  /api/login:
+    post:
+      tags:
+        - Auth
+      summary: Login a user as admin
+      description: Login a user with email and password
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: User credentials
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "admin@admin.com"
+              password:
+                type: string
+                example: "password123"
+      responses:
+        "200":
+          description: User logged in successfully
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0N
+        "400":
+          description: Invalid email or password
+  /api/logout:
+    post:
+      tags:
+        - Auth
+      summary: Logout a user as admin
+      description: Logout a user as admin
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: User logged out successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "User logged out successfully"
+        "401":
+          description: Unauthorized
+  /flight:
+    post:
+      tags:
+        - Flight
+      summary: Create a new flight
+      description: Creates a new flight with the provided details
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: flight
+          description: The flight to create
+          schema:
+            $ref: '#/definitions/Flight'
+      responses:
+        '201':
+          description: Successfully created a new flight
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+    get:
+      tags:
+        - Flight
+      summary: Get all flights
+      description: Returns a list of all flights
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Successfully retrieved flights
+        '401':
+          description: Unauthorized
+  /flight/{id}:
+    put:
+      tags:
+        - Flight
+      summary: Update a flight
+      description: Updates the flight with the provided ID with the new details
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the flight to update
+          required: true
+          type: string
+        - in: body
+          name: flight
+          description: The updated flight details
+          schema:
+            $ref: '#/definitions/Flight'
+      responses:
+        '200':
+          description: Successfully updated the flight
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Flight not found
+    delete:
+      tags:
+        - Flight
+      summary: Delete a flight
+      description: Deletes the flight with the provided ID
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the flight to delete
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted the flight
+        '401':
+          description: Unauthorized
+        '404':
+          description: Flight not found
+  /api/payment-flight/{id}:
+    put:
+      summary: Update payment status of a flight booking
+      tags:
+        - Payment Flight Confirm By Admin
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: ID of the payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paymentStatus:
+                  type: string
+                  enum: [pending, paid, failed]
+                  description: The new payment status of the booking
+              example:
+                paymentStatus: paid
+      responses:
+        '200':
+          description: Payment status updated successfully
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '404':
+          description: Payment not found
+        '500':
+          description: Server error
+    /hotels:
+    post:
+      tags:
+        - Hotel
+      summary: Create a new hotel
+      description: Only admins can create a new hotel
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: hotel
+          description: The hotel to create
+          schema:
+            $ref: '#/definitions/Hotel'
+      responses:
+        '201':
+          description: Hotel created successfully
+          schema:
+            $ref: '#/definitions/Hotel'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+    get:
+      tags:
+        - Hotel
+      summary: Get all hotels
+      description: Anyone can get a list of all hotels
+      responses:
+        '200':
+          description: List of hotels
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Hotel'
+        '500':
+          description: Internal server error
+  /hotels/{hotelId}:
+    put:
+      tags:
+        - Hotel
+      summary: Update a hotel by ID
+      description: Only admins can update a hotel
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: hotelId
+          description: ID of the hotel to update
+          required: true
+          type: string
+        - in: body
+          name: hotel
+          description: The hotel data to update
+          schema:
+            $ref: '#/definitions/Hotel'
+      responses:
+        '200':
+          description: Hotel updated successfully
+          schema:
+            $ref: '#/definitions/Hotel'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Hotel not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+        - Hotel
+      summary: Delete a hotel by ID
+      description: Only admins can delete a hotel
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: hotelId
+          description: ID of the hotel to delete
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Hotel deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Hotel not found
+        '500':
+          description: Internal server error
+  /hotels/{hotelId}/rooms:
+    post:
+      tags:
+        - Room
+      summary: Add a new room to a hotel by ID
+      description: Only admins can add a new room to a hotel
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: hotelId
+          description: ID of the hotel to add a room to
+          required: true
+          type: string
+        - in: body
+          name: room
+          description: The room to add to the hotel
+          schema:
+            $ref: '#/definitions/Room'
+      responses:
+        '201':
+          description: Room added successfully
+          schema:
+            $ref: '#/definitions/Room'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Hotel not found
+        '500':
+          description: Internal server error
+    get:
+      tags:
+        - Room
+      summary: Get all rooms from a hotel by ID
+      description: Anyone can get a list of all rooms from a hotel
+      parameters:
+        - in: path
+          name: hotelId
+          description: ID of the hotel to get rooms from
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of rooms
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Room'
+        '404':
+          description: Hotel not found
+        '500':
+          description: Internal server error
+  /hotels/{hotelId}/rooms/{roomId}:
+    put:
+      tags:
+        - Room
+      summary: Update a room from a hotel by ID
+      description: Only admins can update a room from a hotel
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: hotelId
+          description: ID of the hotel to update a room from
+          required: true
+          type: string
+        - in: path
+          name: roomId
+          description: ID of the room to update
+          required: true
+          type: string
+        - in: body
+          name: room
+          description: The room data to update
+          schema:
+            $ref: '#/definitions/Room'
+      responses:
+        '200':
+          description: Room updated successfully
+          schema:
+            $ref: '#/definitions/Room'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Hotel or room not found
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+        - Room
+      summary: Delete a room from a hotel by ID
+      description: Only admins can delete a room from a hotel
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: hotelId
+          description: ID of the hotel to delete a room from
+          required: true
+          type: string
+        - in: path
+          name: roomId
+          description: ID of the room to delete
+          required: true
+          type: string
+      responses:
+        '204':
+          description: Room deleted successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Hotel or room not found
+        '500':
+          description: Internal server error
+  /api/users/:
+    post:
+      tags:
+        - User
+      summary: Create a new user
+      description: Creates a new user account with the given details
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user object to create
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '201':
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/Error'
+    get:
+      tags:
+        - User
+      security:
+        - Bearer: []
+      summary: Get a user by ID
+      description: Retrieves the user account with the given ID
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the user to retrieve
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: User found
+          schema:
+            $ref: '#/definitions/User'
+        '404':
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - User
+      security:
+        - Bearer: []
+      summary: Update a user by ID
+      description: Updates the user account with the given ID
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the user to update
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: user
+          description: The user object with updated details
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: User updated successfully
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - User
+      security:
+        - Bearer: []
+      summary: Delete a user by ID
+      description: Deletes the user account with the given ID
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the user to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        204:
+          description: User deleted successfully
+        404:
+          description: User not found
+          schema:
+            $ref: '#/definitions/Error'
+  /api/confirm-payment/:
+    post:
+      tags:
+        - Payment Booking Hotels Confirm By Admin
+      summary: Confirm payment for hotel booking.
+      description: This endpoint is used to confirm payment for a hotel booking.
+      security:
+        - bearerAuth: []
+      produces:
+        - application/json
+      parameters:
+        - name: bookingId
+          in: body
+          description: ID of the booking to confirm payment for.
+          required: true
+          schema:
+            type: object
+            properties:
+              bookingId:
+                type: string
+      responses:
+        200:
+          description: Payment confirmed successfully.
+        400:
+          description: Bad request. Invalid booking ID provided.
+        401:
+          description: Unauthorized. Authentication credentials invalid or not provided.
+        500:
+          description: Internal server error. An unexpected error occurred while confirming payment.
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+      code:
+        type: integer
+        format: int32
+      fields:
+        type: string
+  Flight:
+    type: object
+    properties:
+      flightNumber:
+        type: string
+        description: The flight number
+      airline:
+        type: string
+        description: The airline
+      departure:
+        type: array
+        items:
+          type: object
+          properties:
+            departure_airport:
+              type: string
+              description: The departure airport
+            departure_city:
+              type: string
+              description: The departure city
+            departure_country:
+              type: string
+              description: The departure country
+            departure_date:
+              type: string
+              format: date-time
+              description: The departure date
+            departure_time:
+              type: string
+              description: The departure time
+        description: The departure details
+      arrival:
+        type: array
+        items:
+          type: object
+          properties:
+            arrival_airport:
+              type: string
+              description: The arrival airport
+            arrival_city:
+              type: string
+              description: The arrival city
+            arrival_country:
+              type: string
+              description: The arrival country
+            arrival_date:
+              type: string
+              format: date-time
+              description: The arrival date
+            arrival_time:
+              type: string
+              description: The arrival time
+        description: The arrival details
+      price:
+        type: number
+        description: The price of the flight
+      seats:
+        type: integer
+        description: The total number of seats on the flight
+      availableSeats:
+        type: integer
+        description: The number of available seats on the flight
+      createdDate:
+        type: string
+        format: date-time
+        description: The date the flight was created
+    required:
+      - flightNumber
+      - airline
+      - departure
+      - arrival
+      - price
+      - seats
+      - availableSeats
+  Room:
+    type: object
+    properties:
+      roomType:
+        type: string
+        description: The type of the room
+      pictureRoomPath:
+        type: string
+        description: The file path of the room picture
+      amount:
+        type: number
+        description: The price of the room
+      availableRooms:
+        type: number
+        description: The number of available rooms
+      facilities:
+        type: array
+        items:
+          type: string
+        description: The facilities available in the room
+    required:
+      - roomType
+      - pictureRoomPath
+      - amount
+      - availableRooms
+      - facilities
+  Hotel:
+    type: object
+    properties:
+      hotelName:
+        type: string
+        description: The name of the hotel
+      city:
+        type: string
+        description: The city where the hotel is located
+      address:
+        type: string
+        description: The address of the hotel
+      pictureHotelPath:
+        type: string
+        description: The file path of the hotel picture
+      stars:
+        type: number
+        description: The number of stars of the hotel
+      facilities:
+        type: array
+        items:
+          type: string
+        description: The facilities available in the hotel
+      rooms:
+        type: array
+        items:
+          $ref: '#/definitions/Room'
+        description: The rooms available in the hotel
+    required:
+      - hotelName
+      - city
+      - address
+      - pictureHotelPath
+      - stars
+      - facilities
+      - rooms
+  
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+    value: qweasd123
+  Bearer:
+    type: apiKey

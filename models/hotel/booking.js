@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const bookingSchema = new Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     hotelId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'HotelRooms',
@@ -28,6 +33,11 @@ const bookingSchema = new Schema({
         type: Number,
         required: true
     },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'paid', 'failed'],
+        default: 'pending'
+    },
     customer: {
         name: {
             type: String,
@@ -44,6 +54,6 @@ const bookingSchema = new Schema({
     }
 }, { timestamps: true });
 
-const Booking = mongoose.model('Booking', bookingSchema);
+const Booking = mongoose.model('Booking_hotel', bookingSchema);
 
 module.exports = Booking;
