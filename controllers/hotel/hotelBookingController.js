@@ -29,7 +29,7 @@ exports.bookRoom = async (req, res) => {
             data: booking
         });
     } catch (error) {
-        console.log(error);
+        
         return res.status(500).json({ message: 'Terjadi kesalahan saat melakukan booking' });
     }
 };
@@ -39,12 +39,12 @@ exports.getBookingById = async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id).exec();
         if (!booking) {
-            return res.status(404).json({ message: 'Booking tidak ditemukan' });
+            return res.status(404).json({ message: error });
         }
         return res.status(200).json(booking);
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data booking' });
+       
+        return res.status(500).json({ message: error });
     }
 };
 
@@ -53,8 +53,7 @@ exports.getAllBookings = async (req, res) => {
         const bookings = await Booking.find().exec();
         return res.status(200).json(bookings);
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data booking' });
+        return res.status(500).json({ message: error });
     }
 };
 
@@ -67,6 +66,7 @@ exports.updateBooking = async (req, res) => {
             return res.status(404).json({ message: 'Booking tidak ditemukan' });
         }
         if (booking.checkInDate < new Date()) {
+            console.log(Date())
             return res.status(400).json({ message: 'Booking sudah terjadi, tidak dapat diubah' });
         }
         const room = await HotelRooms.findOne({ _id: hotelId, 'rooms._id': roomId }, { 'rooms.$': 1 }).exec();
@@ -91,8 +91,7 @@ exports.updateBooking = async (req, res) => {
             data: updatedBooking
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat mengubah booking' });
+           return res.status(500).json({ message: error });
     }
 };
 
@@ -114,7 +113,7 @@ exports.cancelBooking = async (req, res) => {
 
         return res.status(200).json({ message: 'Booking berhasil dibatalkan' });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat membatalkan booking' });
+      
+        return res.status(500).json({ message: error });
     }
 };

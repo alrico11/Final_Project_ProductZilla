@@ -1,7 +1,8 @@
+require('dotenv').config();
+
 function auth(req,res,next){
     const authHeader = req.header('Authorization');
-    const key = 'qweasd123'
-    if (authHeader == key){
+    if (authHeader == process.env.key){
         // res.status(401)
         next();
     

@@ -1,6 +1,6 @@
 const Payment = require('../../models/flight/payment');
 const Booking = require('../../models/flight/booking');
-// Get all payments
+//Get all payments
 exports.getAllPayments = async (req, res) => {
     try {
         const payments = await Payment.find().populate('booking');
@@ -9,7 +9,6 @@ exports.getAllPayments = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 // Get a single payment by id
 exports.getPaymentById = async (req, res) => {
     try {
@@ -51,7 +50,7 @@ exports.confirmPayment = async (req, res, next) => {
         await payment.save();
         return res.status(200).json({ message: 'Payment confirmed' });
     } catch (error) {
-        return next(error);
+        return   res.status(400).json({ message: error.message });
     }
 };
 

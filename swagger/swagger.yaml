@@ -245,6 +245,40 @@ paths:
           description: Successfully retrieved flights
         '401':
           description: Unauthorized
+  /api/flight/search:
+    post:
+      tags:
+        - Flight
+      summary: Find flights by origin and destination cities
+      description: Finds flights that match the provided origin and destination cities
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: search
+          description: The search criteria for finding flights
+          schema:
+            type: object
+            properties:
+              departureCity:
+                type: string
+                description: The origin city to search for
+              arrivalCity:
+                type: string
+                description: The destination city to search for
+            required:
+              - departureCity
+              - arrivalCity
+          example:
+            departureCity: New York
+            arrivalCity: London
+      responses:
+        '200':
+          description: Successfully retrieved flights
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
   /api/flight/{id}:
     put:
       tags:
@@ -698,8 +732,17 @@ paths:
         - name: booking
           in: body
           description: The booking to create
-          schema:
-            $ref: '#/definitions/Booking_flight'
+          example:
+            flight: "6491f77451f7ac88506d6e9b"
+            passengers:
+              - name: "John Doe"
+                age: 30
+                gender: "Male"
+              - name: "Jane Doe"
+                age: 28
+                gender: "Female"
+            bookingType: "vip"
+            totalPrice: 5000000
       security:
         - bearerAuth: []
       responses:
@@ -806,6 +849,10 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/Payment_Flight'
+          example:
+            booking: "648214ba9f0def89385b3512"
+            paymentType: "transfer"
+            proofPayment: "ss.png"
       responses:
         200:
           description: Successfully operation
@@ -1352,14 +1399,6 @@ definitions:
   Booking Hotel:
     type: object
     properties:
-      _id:
-        type: string
-        description: Unique identifier for the booking.
-        example: "5fcbf8a7e1e2350012fe1b3d"
-      user:
-        type: string
-        description: Unique identifier for the user who made the booking.
-        example: "5fcbf8a7e1e2350012fe1b3e"
       hotelId:
         type: string
         description: Unique identifier for the hotel that was booked.
@@ -1372,12 +1411,12 @@ definitions:
         type: string
         format: date-time
         description: Date and time of check-in.
-        example: "2021-12-01T14:30:00.000Z"
+        example: "2023-07-13T14:30:00.000Z"
       checkOutDate:
         type: string
         format: date-time
         description: Date and time of check-out.
-        example: "2021-12-05T10:00:00.000Z"
+        example: "2023-07-14T14:30:00.000Z"
       guest:
         type: integer
         description: Number of guests.

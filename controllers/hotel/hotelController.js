@@ -6,7 +6,7 @@ const hotelController = {
             const hotels = await Hotel.find();
             return res.json(hotels);
         } catch (error) {
-            console.error(error);
+     
             return res.status(500).json({ message: 'Internal server error' });
         }
     },
@@ -19,7 +19,7 @@ const hotelController = {
             }
             return res.json(hotel);
         } catch (error) {
-            console.error(error);
+           
             return res.status(500).json({ message: 'Internal server error' });
         }
     },
@@ -30,7 +30,7 @@ const hotelController = {
 
             return res.status(200).json(hotels);
         } catch (error) {
-            console.error(error);
+          
             return res.status(500).json({ message: 'Internal Server Error' });
         }
     },
@@ -41,7 +41,6 @@ const hotelController = {
             const savedHotel = await newHotel.save();
             return res.json(savedHotel);
         } catch (error) {
-            console.error(error);
             return res.status(500).json({ message: 'Internal server error' });
         }
     },
@@ -58,7 +57,6 @@ const hotelController = {
             }
             return res.json(updatedHotel);
         } catch (error) {
-            console.error(error);
             return res.status(500).json({ message: 'Internal server error' });
         }
     },
@@ -71,7 +69,7 @@ const hotelController = {
             }
             return res.json(deletedHotel);
         } catch (error) {
-            console.error(error);
+          
             return res.status(500).json({ message: 'Internal server error' });
         }
     }

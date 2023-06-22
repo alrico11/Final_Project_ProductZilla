@@ -27,7 +27,7 @@ exports.confirmPayment = async (req, res) => {
 
         return res.status(200).json({ message: 'Payment received', data });
     } catch (error) {
-        console.log(error);
+    
         return res.status(500).json({ message: error });
     }
 }
@@ -54,7 +54,7 @@ exports.createPayment = async (req, res) => {
 
         return res.status(200).json({ message: 'Your order has been received', data });
     } catch (error) {
-        console.log(error);
+    
         return res.status(500).json({ message: error });
     }
 }
@@ -65,7 +65,7 @@ exports.getAllPayments = async (req, res) => {
         const payments = await Payment.find().populate('bookingId').exec();
         return res.status(200).json({ payments });
     } catch (error) {
-        console.log(error);
+   
         return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data pembayaran' });
     }
 }
@@ -78,7 +78,7 @@ exports.getPaymentById = async (req, res) => {
         }
         return res.status(200).json({ payment });
     } catch (error) {
-        console.log(error);
+       
         return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data pembayaran' });
     }
 }
@@ -105,7 +105,7 @@ exports.deletePayment = async (req, res) => {
         }
         return res.status(200).json({ message: 'Pembayaran berhasil dihapus' });
     } catch (error) {
-        console.log(error);
+    
         return res.status(500).json({ message: 'Terjadi kesalahan saat menghapus data pembayaran' });
     }
 }

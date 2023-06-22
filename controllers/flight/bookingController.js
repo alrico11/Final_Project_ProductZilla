@@ -52,7 +52,6 @@ exports.updateBooking = async (req, res) => {
         booking.passengers = req.body.passengers;
         booking.bookingType = req.body.bookingType;
         booking.totalPrice = req.body.totalPrice;
-
         const updatedBooking = await booking.save();
         res.json(updatedBooking);
     } catch (error) {

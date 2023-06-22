@@ -21,7 +21,7 @@ exports.addNewRoom = async (req, res) => {
             data: room
         });
     } catch (error) {
-        console.log(error);
+       
         return res.status(500).json({ message: 'Terjadi kesalahan saat menambahkan room ke hotel' });
     }
 };
@@ -37,7 +37,7 @@ exports.getHotelRoomsById = async (req, res) => {
             data: hotel.rooms
         });
     } catch (error) {
-        console.log(error);
+      
         return res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data room pada hotel' });
     }
 };
@@ -64,8 +64,7 @@ exports.updateRoom = async (req, res) => {
             data: hotel.rooms[roomIndex]
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat mengupdate room pada hotel' });
+        return res.status(500).json({ message: error });
     }
 };
 
@@ -86,8 +85,7 @@ exports.deleteRoom = async (req, res) => {
             data: deletedRoom
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Terjadi kesalahan saat menghapus room pada hotel' });
+        return res.status(500).json({ message: error });
     }
 };
 
