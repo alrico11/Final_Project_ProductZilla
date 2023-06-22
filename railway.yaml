@@ -6,4 +6,5 @@ tasks:
   build:
     command: npm run build
   start:
+    command: npm install
     command: npm start
