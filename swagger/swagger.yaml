@@ -341,19 +341,10 @@ paths:
             type: string
           required: true
           description: ID of the payment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                paymentStatus:
-                  type: string
-                  enum: [pending, paid, failed]
-                  description: The new payment status of the booking
-              example:
-                paymentStatus: paid
+        - in: body
+          example:
+            paymentStatus: paid
+            paymentType: debit_online
       responses:
         '200':
           description: Payment status updated successfully
@@ -389,6 +380,8 @@ paths:
     get:
       tags:
         - Hotel
+      security:
+        - bearerAuth: []
       summary: Get all hotels
       description: Anyone can get a list of all hotels
       responses:
@@ -695,6 +688,8 @@ paths:
             properties:
               bookingId:
                 type: string
+              paymentType:
+                type: string
       responses:
         200:
           description: Payment confirmed successfully.
@@ -847,8 +842,6 @@ paths:
           name: body
           description: Payment object that needs to be added
           required: true
-          schema:
-            $ref: '#/definitions/Payment_Flight'
           example:
             booking: "648214ba9f0def89385b3512"
             paymentType: "transfer"
@@ -1020,13 +1013,17 @@ paths:
       description: Create a new payment for a hotel booking
       tags:
         - Payment Hotel
+      security:
+        - bearerAuth: []
       parameters:
         - in: body
           name: payment
           description: The payment details
           required: true
-          schema:
-            $ref: '#/definitions/Payment Hotel'
+          example:
+            bookingId: "64821c42152c0f72117f0d08"
+            paymentType: "transfer"
+            proofPayment: "ss.png"
       responses:
         '200':
           description: The created payment
@@ -1035,6 +1032,8 @@ paths:
     get:
       summary: Get all payments
       description: Get all payments for hotel bookings
+      security:
+        - bearerAuth: []
       tags:
         - Payment Hotel
       responses:
@@ -1047,6 +1046,8 @@ paths:
       get:
         summary: Get a payment by ID
         description: Get a payment for a hotel booking by its ID
+        security:
+        - bearerAuth: []
         tags:
           - Payment Hotel
         parameters:
@@ -1063,6 +1064,8 @@ paths:
       put:
         summary: Update a payment by ID
         description: Update a payment for a hotel booking by its ID
+        security:
+        - bearerAuth: []
         tags:
           - Payment Hotel
         parameters:
@@ -1085,6 +1088,8 @@ paths:
       delete:
         summary: Delete a payment by ID
         description: Delete a payment for a hotel booking by its ID
+        security:
+        - bearerAuth: []
         tags:
           - Payment Hotel
         parameters:
@@ -1111,9 +1116,6 @@ definitions:
         type: string
         format: email
         example: johndoe@example.com
-      isAdmin:
-        type: boolean
-        example: false
       password:
         type: string
         format: password
@@ -1170,7 +1172,7 @@ definitions:
               type: string
               format: date-time
               description: The departure date
-              example: "2021-08-01T10:00:00Z"
+              example: "2021-08-01"
             departure_time:
               type: string
               description: The departure time
@@ -1197,7 +1199,7 @@ definitions:
               type: string
               format: date-time
               description: The arrival date
-              example: "2021-08-02T14:00:00Z"
+              example: "2021-08-02"
             arrival_time:
               type: string
               description: The arrival time
@@ -1215,11 +1217,6 @@ definitions:
         type: integer
         description: The number of available seats on the flight
         example: 100
-      createdDate:
-        type: string
-        format: date-time
-        description: The date the flight was created
-        example: "2021-07-01T10:00:00Z"
     required:
       - flightNumber
       - airline
@@ -1348,11 +1345,6 @@ definitions:
         type: number
         description: Total price of the booking.
         example: 1500.00
-      createdDate:
-        type: string
-        format: date-time
-        description: Date and time when the booking was created.
-        example: "2021-07-01T10:00:00Z"
   Payment_Flight:
     type: object
     properties:
@@ -1386,16 +1378,6 @@ definitions:
         type: string
         description: Billing number of the payment.
         example: abc123xyz456
-      createdAt:
-        type: string
-        format: date-time
-        description: Date and time when the payment was created.
-        example: "2021-07-01T10:00:00Z"
-      updatedAt:
-        type: string
-        format: date-time
-        description: Date and time when the payment was last updated.
-        example: "2021-07-02T10:00:00Z"
   Booking Hotel:
     type: object
     properties:
@@ -1445,16 +1427,6 @@ definitions:
             type: string
             description: Phone number of the customer who made the booking.
             example: "+1-555-123-4567"
-      createdAt:
-        type: string
-        format: date-time
-        description: Date and time when the booking was created.
-        example: "2021-11-30T16:23:12.000Z"
-      updatedAt:
-        type: string
-        format: date-time
-        description: Date and time when the booking was last updated.
-        example: "2021-11-30T16:23:12.000Z"
   Payment Hotel:
     type: object
     properties:
@@ -1481,18 +1453,6 @@ definitions:
       billingNumber:
         type: string
         description: Billing number of the payment.
-      paymentDate:
-        type: string
-        format: date-time
-        description: Date and time when the payment was made.
-      createdAt:
-        type: string
-        format: date-time
-        description: Date and time when the payment was created.
-      updatedAt:
-        type: string
-        format: date-time
-        description: Date and time when the payment was last updated.
     required:
       - id
       - roomType
@@ -1501,8 +1461,6 @@ definitions:
       - guestName
       - guestEmail
       - totalPrice
-      - createdAt
-      - updatedAt
     example:
       bookingId: 5fa7a22b8b5f4f0017d6a6f2
       amount: 500000
@@ -1510,7 +1468,6 @@ definitions:
       paymentType: lobby
       proofPayment: https://example.com/payment-proof.jpg
       billingNumber: abc123xyz456
-      paymentDate: '2021-07-01T10:00:00Z'
 securityDefinitions:
   api_key auth admin:
     type: apiKey
