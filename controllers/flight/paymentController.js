@@ -50,21 +50,20 @@ exports.confirmPayment = async (req, res, next) => {
         await payment.save();
         return res.status(200).json({ message: 'Payment confirmed' });
     } catch (error) {
-        return   res.status(400).json({ message: error.message });
+        return res.status(400).json({ message: error.message });
     }
 };
 
 
 // Update an existing payment
 exports.updatePayment = async (req, res) => {
-
     try {
         const payment = await Payment.findById(req.params.id);
         if (!payment) {
             return res.status(404).json({ message: 'Payment not found' });
         }
         payment.paymentStatus = 'paid';
-
+        await payment.save();
         const booking = await Booking.findById(payment.booking);
         if (!booking) {
             return res.status(404).json({ message: 'Booking not found' });
