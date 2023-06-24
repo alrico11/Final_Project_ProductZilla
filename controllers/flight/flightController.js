@@ -63,14 +63,14 @@ exports.getFlight = async (req, res) => {
 };
 
 // update flight
+
 exports.updateFlight = async (req, res) => {
   try {
-    const flight = await Flight.findByIdAndUpdate(req.params.id);
+    const flight = await Flight.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('departure.departure_airport').populate('arrival.arrival_airport');
     if (!flight) {
       return res.status(404).json({ message: 'Flight not found' });
     }
-    const savedFlight = await Flight.findById(flight._id).populate('departure.departure_airport').populate('arrival.arrival_airport');
-    res.json(savedFlight);
+    res.json(flight);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
