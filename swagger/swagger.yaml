@@ -784,8 +784,17 @@ paths:
         - name: booking
           in: body
           description: The updated booking
-          schema:
-            $ref: '#/definitions/Booking_flight'
+          example:
+            flight: "ID FLIGHT"
+            passengers:
+              - name: "John Doe"
+                age: 30
+                gender: "Male"
+              - name: "Jane Doe"
+                age: 28
+                gender: "Female"
+            bookingType: "vip"
+            totalPrice: 5000000
       security:
         - bearerAuth: []
       responses:
