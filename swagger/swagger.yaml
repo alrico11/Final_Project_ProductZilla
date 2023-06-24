@@ -781,7 +781,6 @@ paths:
           description: The ID of the booking to update
           required: true
           type: string
-          format: int64
         - name: booking
           in: body
           description: The updated booking
