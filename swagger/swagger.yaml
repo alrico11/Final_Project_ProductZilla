@@ -328,28 +328,6 @@ paths:
         '404':
           description: Flight not found
   /api/payment-flight/{id}:
-    get:
-      summary: Get payment status of a flight booking
-      tags:
-        - Payment Flight Confirm By Admin
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-          required: true
-          description: ID of the payment
-      responses:
-        '200':
-          description: Payment status retrieved successfully
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-        '404':
-          description: Payment not found
-        '500':
-          description: Server error
     put:
       summary: Update payment status of a flight booking
       tags:
@@ -363,19 +341,10 @@ paths:
             type: string
           required: true
           description: ID of the payment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                paymentStatus:
-                  type: string
-                  enum: [pending, paid, failed]
-                  description: The new payment status of the booking
-              example:
-                paymentStatus: paid
+        - in: body
+          example:
+            paymentStatus: paid
+            paymentType: debit_online
       responses:
         '200':
           description: Payment status updated successfully
@@ -719,6 +688,8 @@ paths:
             properties:
               bookingId:
                 type: string
+              paymentType:
+                type: string
       responses:
         200:
           description: Payment confirmed successfully.
@@ -871,8 +842,6 @@ paths:
           name: body
           description: Payment object that needs to be added
           required: true
-          schema:
-            $ref: '#/definitions/Payment_Flight'
           example:
             booking: "648214ba9f0def89385b3512"
             paymentType: "transfer"
@@ -1051,8 +1020,10 @@ paths:
           name: payment
           description: The payment details
           required: true
-          schema:
-            $ref: '#/definitions/Payment Hotel'
+          example:
+            bookingId: "64821c42152c0f72117f0d08"
+            paymentType: "transfer"
+            proofPayment: "ss.png"
       responses:
         '200':
           description: The created payment
