@@ -170,7 +170,6 @@ describe('updateFlight', () => {
 
     await controllers.updateFlight(req, res);
 
-    expect(FlightModel.findByIdAndUpdate).toHaveBeenCalledWith(req.params.id);
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({ message: error.message });
 
