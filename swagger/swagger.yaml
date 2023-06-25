@@ -34,7 +34,7 @@ tags:
   - name: Hotel Booking
     description: API for making hotel booking by user
   - name: Payment Hotel
-    description: API for making hotel booking by user    
+    description: API for making hotel payment by user    
 paths:
   /api/admin:
     post:

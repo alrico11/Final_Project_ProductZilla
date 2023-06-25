@@ -35,7 +35,6 @@ exports.login = async (req, res) => {
     // Tambahkan token ke user
     user.tokens = user.tokens.concat({ token });
     await user.save();
-
     // Kirim token ke client beserta informasi isAdmin
     res.status(200)
       .set('Authorization', `Bearer ${token}`)
@@ -53,25 +52,19 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 exports.logout = async (req, res) => {
   const { authorization } = req.headers;
-
   if (!authorization) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
-
   const token = authorization.replace('Bearer ', '');
-
   // Cek apakah token sudah di-blacklist
   const blacklistedToken = await BlacklistedToken.findOne({ token });
   if (blacklistedToken) {
     return res.status(401).json({ message: 'Expired Token' });
   }
-
   // Tambahkan token ke dalam database
   const newBlacklistedToken = new BlacklistedToken({ token });
   await newBlacklistedToken.save();
-
   res.status(200).json({ message: 'Logout successful' });
 };
