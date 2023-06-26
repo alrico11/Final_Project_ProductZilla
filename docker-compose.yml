@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  mongodb:
+    image: mongo:6.0.1
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - './volumes/mongodb/data:/data'
+  app:
+    image: alrico11/finalproject-productzilla
+    restart: unless-stopped
+    environment:
+      - DB_HOST=154.26.131.99
+      - DB_PORT=31017
+      - DB_NAME=bootcamp-b5-kelompok4
+      - DB_USERNAME=kelompok4
+      - DB_PASSWORD=MSIBB5123
+      - JWT_SECRET=katasandi
+      - key=qweasd123
+    ports:
+      - 3000:3000
