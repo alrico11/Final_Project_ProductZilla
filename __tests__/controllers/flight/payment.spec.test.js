@@ -151,12 +151,12 @@ describe('Payment Controller', () => {
             expect(res.status.mock.calls[0][0]).toBe(404);
             expect(res.json.mock.calls[0][0]).toHaveProperty('message');
         });
-        it('should return 404 when booking not found', async () => {
+        it('should return 400 when booking not found', async () => {
             Payment.findById.mockResolvedValue({});
             Booking.findById.mockResolvedValue(null);
             req.params = { id: '1' };
             await paymentController.updatePayment(req, res);
-            expect(res.status.mock.calls[0][0]).toBe(404);
+            expect(res.status.mock.calls[0][0]).toBe(400);
             expect(res.json.mock.calls[0][0]).toHaveProperty('message');
         });
         it('should return 400 when there is an error', async () => {

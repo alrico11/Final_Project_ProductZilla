@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-
 async function connect(){
     await mongoose.connect(`mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, {
     });
@@ -11,11 +10,9 @@ async function connect(){
         console.log("MONGODB CONNECTED")
     })
 }
-
 async function disconnect(){
     await mongoose.disconnect();
 }
-
 async function clearDB() {
     for (const collection in mongoose.connection.collections) {
       mongoose.connection.collections[collection].deleteMany({});

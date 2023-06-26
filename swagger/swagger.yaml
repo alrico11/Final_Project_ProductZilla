@@ -6,6 +6,7 @@ info:
 basePath: '/'
 schemes:
   - http
+  - https
 consumes:
   - application/json
 produces:
@@ -34,7 +35,7 @@ tags:
   - name: Hotel Booking
     description: API for making hotel booking by user
   - name: Payment Hotel
-    description: API for making hotel booking by user    
+    description: API for making hotel payment by user    
 paths:
   /api/admin:
     post:
@@ -781,6 +782,7 @@ paths:
           description: The ID of the booking to update
           required: true
           type: string
+          format: int64
         - name: booking
           in: body
           description: The updated booking
