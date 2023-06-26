@@ -2399,17 +2399,17 @@ describe('===============PAYMENT BOOKING HOTELS API TESTING', () => {
             expect(res.statusCode).toEqual(200);
             expect(res.body.data).toHaveProperty('_id');
             paymentHotelsId = res.body.data._id;
-        //    console.log("payment",paymentHotelsId)
+            //    console.log("payment",paymentHotelsId)
         });
         it('should confirm payment', async () => {
             const res = await request(app)
-                .put('/api/confirm-payment/'+paymentHotelsId)
+                .put('/api/confirm-payment/' + paymentHotelsId)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     "paymentStatus": "paid",
                     "paymentType": "debit_online"
-                  });
-                //   console.log(paymentHotelsId)
+                });
+            //   console.log(paymentHotelsId)
             // console.log(res.body,res.status);
             expect(res.statusCode).toEqual(404);
             // expect(res.body.message).toEqual('Payment confirmed');
@@ -2421,7 +2421,7 @@ describe('===============PAYMENT BOOKING HOTELS API TESTING', () => {
                 .send({
                     "paymentStatus": "paid",
                     "paymentType": "debit_online"
-                  });
+                });
             // console.log(res.body, res.status);
             expect(res.statusCode).toEqual(404);
             expect(res.body).toEqual({})
