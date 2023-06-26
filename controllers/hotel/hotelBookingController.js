@@ -23,7 +23,7 @@ exports.bookRoom = async (req, res) => {
             user: req.user.id
         });
         await booking.save();
-        await HotelRooms.updateOne({ _id: hotelId, 'rooms._id': roomId }, { $inc: { 'rooms.$.availableRooms': -guest } }).exec();
+        await HotelRooms.updateOne({ _id: hotelId, 'rooms._id': roomId }, { $inc: { 'rooms.$.availableRooms': -1 } }).exec();
 
         return res.status(200).json({
             message: 'Booking berhasil',
