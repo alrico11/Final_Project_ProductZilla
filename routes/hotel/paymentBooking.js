@@ -11,5 +11,5 @@ router.get('/api/payment/:id', authMiddleware,paymentController.getPaymentById);
 router.get('/api/payment/', authMiddleware,paymentController.getAllPayments);
 router.put('/api/payment/:id', authMiddleware,paymentController.updatePayment);
 router.delete('/api/payment/:id', authMiddleware,paymentController.deletePayment);
-router.post('/api/confirm-payment/', auth,paymentController.confirmPayment);
+router.put('/api/confirm-payment/', auth,paymentController.confirmPayment);
 module.exports = router;

@@ -1,4 +1,5 @@
 const Booking = require('../../models/flight/booking');
+const Flight = require('../../models/flight/flight');
 
 // Get all bookings
 exports.getAllBookings = async (req, res) => {
@@ -24,6 +25,7 @@ exports.getBookingById = async (req, res) => {
 };
 
 // Create a new booking
+
 exports.createBooking = async (req, res) => {
     const booking = new Booking({
         user: req.user.id,
@@ -34,6 +36,13 @@ exports.createBooking = async (req, res) => {
     });
 
     try {
+        const flight = await Flight.findById(req.body.flight);
+        if (flight.availableSeats < req.body.passengers.length) {
+            return res.status(400).json({ message: "Not enough seats available" });
+        }
+        flight.availableSeats -= req.body.passengers.length;
+        await flight.save();
+
         const newBooking = await booking.save();
         res.status(201).json(newBooking);
     } catch (error) {

@@ -670,7 +670,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
   /api/confirm-payment/:
-    post:
+    put:
       tags:
         - Payment Booking Hotels Confirm By Admin
       summary: Confirm payment for hotel booking.
@@ -680,17 +680,16 @@ paths:
       produces:
         - application/json
       parameters:
-        - name: bookingId
-          in: body
-          description: ID of the booking to confirm payment for.
-          required: true
+        - in: path
+          name: id
           schema:
-            type: object
-            properties:
-              bookingId:
-                type: string
-              paymentType:
-                type: string
+            type: string
+          required: true
+          description: ID of the payment
+        - in: body
+          example:
+            paymentStatus: paid
+            paymentType: debit_online
       responses:
         200:
           description: Payment confirmed successfully.

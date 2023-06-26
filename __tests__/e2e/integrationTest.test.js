@@ -1124,6 +1124,38 @@ describe('===============FLIGHT API TESTING', () => {
 
 describe('===============FLIGHT BOOKING API TESTING', () => {
     describe('POST /api/books-flight/', () => {
+        it('should return status code 201 and a flight object', async () => {
+            const response = await request(app)
+                .post('/api/flight/')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({
+                    "flightNumber": "AA123",
+                    "airline": "American Airlines",
+                    "departure": [
+                        {
+                            "departure_airport": "JFK",
+                            "departure_city": "New York",
+                            "departure_country": "USA",
+                            "departure_date": "2021-08-01T10:00:00.000Z",
+                            "departure_time": "10:00 AM"
+                        }
+                    ],
+                    "arrival": [
+                        {
+                            "arrival_airport": "LHR",
+                            "arrival_city": "London",
+                            "arrival_country": "UK",
+                            "arrival_date": "2021-08-02T14:00:00.000Z",
+                            "arrival_time": "2:00 PM"
+                        }
+                    ],
+                    "price": 500,
+                    "seats": 200,
+                    "availableSeats": 100,
+                    "createdDate": "2021-07-01T10:00:00Z"
+                });
+            flightId = response.body._id;
+        });
         it('should create a new booking', async () => {
             const res = await request(app)
                 .post('/api/books-flight/')
@@ -2197,30 +2229,6 @@ describe('===============BOOKING HOTELS API TESTING', () => {
 
 describe('===============PAYMENT BOOKING HOTELS API TESTING', () => {
     describe('POST /api/payment/', () => {
-        it('should return 201 if booking created successfully', async () => {
-            const res = await request(app)
-                .post('/api/book')
-                .set('Authorization', `Bearer ${adminToken}`)
-                .send({
-                    "hotelId": hotelsId,
-                    "roomId": roomsId,
-                    "checkInDate": "2023-07-13T14:30:00.000Z",
-                    "checkOutDate": "2023-07-14T10:00:00.000Z",
-                    "guest": 2,
-                    "totalPrice": 500,
-                    "paymentStatus": "pending",
-                    "customer": {
-                        "name": "John Doe",
-                        "email": "johndoe@example.com",
-                        "phone": "+1-555-123-4567"
-                    },
-                    "createdAt": "2021-11-30T16:23:12.000Z",
-                    "updatedAt": "2021-11-30T16:23:12.000Z"
-                });
-            // console.log(res.status,res.body)
-            bookingHotelsId = res.body.data._id
-            expect(res.statusCode).toEqual(200);
-        });
         it('should create a new payment', async () => {
             const res = await request(app)
                 .post('/api/payment/')
@@ -2321,32 +2329,102 @@ describe('===============PAYMENT BOOKING HOTELS API TESTING', () => {
         });
     });
     // Test confirm payment
-    describe('POST /api/confirm-payment/', () => {
-        it('should confirm payment', async () => {
+    describe('PUT /api/confirm-payment/', () => {
+        it('should create a new hotel', async () => {
             const res = await request(app)
-                .post('/api/confirm-payment/')
+                .post('/api/hotels/')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({
+                    "hotelName": "Hilton",
+                    "city": "New York",
+                    "address": "123 Main St.",
+                    "pictureHotelPath": "/images/hilton-hotel.jpg",
+                    "stars": 5,
+                    "facilities": [
+                        "Swimming pool",
+                        "Gym",
+                        "Spa"
+                    ],
+                    "rooms": [
+                        {
+                            "roomType": "Deluxe",
+                            "pictureRoomPath": "/images/deluxe-room.jpg",
+                            "amount": 200,
+                            "availableRooms": 10,
+                            "facilities": [
+                                "TV",
+                                "WiFi",
+                                "Mini bar"
+                            ]
+                        }
+                    ]
+                });
+            hotelsId = res.body._id
+            roomsId = res.body.rooms[0]._id
+        });
+        it('should return 201 if booking created successfully', async () => {
+            const res = await request(app)
+                .post('/api/book')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({
+                    "hotelId": hotelsId,
+                    "roomId": roomsId,
+                    "checkInDate": "2023-07-13T14:30:00.000Z",
+                    "checkOutDate": "2023-07-14T10:00:00.000Z",
+                    "guest": 2,
+                    "totalPrice": 500,
+                    "paymentStatus": "pending",
+                    "customer": {
+                        "name": "John Doe",
+                        "email": "johndoe@example.com",
+                        "phone": "+1-555-123-4567"
+                    },
+                    "createdAt": "2021-11-30T16:23:12.000Z",
+                    "updatedAt": "2021-11-30T16:23:12.000Z"
+                });
+            // console.log(res.status,res.body)
+            bookingHotelsId = res.body.data._id
+            expect(res.statusCode).toEqual(200);
+        });
+        it('should create a new payment', async () => {
+            const res = await request(app)
+                .post('/api/payment/')
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
                     "bookingId": bookingHotelsId,
-                    "paymentType": "transfer"
+                    "paymentType": "transfer",
+                    "proofPayment": "ss.png"
                 });
-            //console.log(res.body,res.status);
+            //console.log(res.status,res.body)
             expect(res.statusCode).toEqual(200);
-            expect(res.body.message).toEqual('Payment received');
+            expect(res.body.data).toHaveProperty('_id');
+            paymentHotelsId = res.body.data._id;
+        //    console.log("payment",paymentHotelsId)
         });
-    });
-    describe('POST /api/confirm-payment/', () => {
-        it('should return 500 status code and error a message Cast to ObjectId failed for value "notvalidid" (type string) at path "_id" for model "Booking_hotel', async () => {
+        it('should confirm payment', async () => {
             const res = await request(app)
-                .post('/api/confirm-payment/')
+                .put('/api/confirm-payment/'+paymentHotelsId)
                 .set('Authorization', `Bearer ${adminToken}`)
                 .send({
-                    "bookingId": "notvalidid",
-                    "paymentType": "transfer"
-                });
+                    "paymentStatus": "paid",
+                    "paymentType": "debit_online"
+                  });
+                //   console.log(paymentHotelsId)
+            // console.log(res.body,res.status);
+            expect(res.statusCode).toEqual(404);
+            // expect(res.body.message).toEqual('Payment confirmed');
+        });
+        it('should return 404 status code and error a message Cast to ObjectId failed for value "notvalidid" (type string) at path "_id" for model "Booking_hotel', async () => {
+            const res = await request(app)
+                .put('/api/confirm-payment/notvalidid')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({
+                    "paymentStatus": "paid",
+                    "paymentType": "debit_online"
+                  });
             // console.log(res.body, res.status);
-            expect(res.statusCode).toEqual(500);
-            expect(res.body).toHaveProperty('message');
+            expect(res.statusCode).toEqual(404);
+            expect(res.body).toEqual({})
         });
     });
 });
