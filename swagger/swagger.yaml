@@ -358,7 +358,7 @@ paths:
   /hotels/search/{city}:
     get:
       tags:
-        - Hotels
+        - Hotel
       summary: Search hotels by city
       description: Retrieve a list of hotels based on a specific city.
       produces:
