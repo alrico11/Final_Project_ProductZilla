@@ -359,6 +359,8 @@ paths:
     get:
       tags:
         - Hotel
+      security:
+        - bearerAuth: []
       summary: Search hotels by city
       description: Retrieve a list of hotels based on a specific city.
       produces:
