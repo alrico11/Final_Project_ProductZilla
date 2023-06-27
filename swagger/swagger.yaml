@@ -513,6 +513,8 @@ paths:
     get:
       tags:
         - Room
+      security:
+        - bearerAuth: []
       summary: Get all rooms from a hotel by ID
       description: Anyone can get a list of all rooms from a hotel
       parameters:
