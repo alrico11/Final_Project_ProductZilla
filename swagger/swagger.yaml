@@ -355,7 +355,7 @@ paths:
           description: Payment not found
         '500':
           description: Server error
-  /hotels/search/{city}:
+  /api/hotels/search/{city}:
     get:
       tags:
         - Hotel
